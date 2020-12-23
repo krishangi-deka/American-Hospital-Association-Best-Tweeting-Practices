@@ -1,0 +1,122 @@
+---
+title: "VIF"
+author: "Group_ISSP"
+date: "12/11/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Importing Libraries
+
+```{r} 
+library(readxl)
+library(dplyr)
+library(fmsb)
+```
+
+
+```{r}
+data <- read.csv('new_scaled.csv')
+df = data[,-c(1,24,25)]
+```
+
+```{r}
+vif_func<-function(in_frame,thresh=10,trace=T,...)
+  {
+  require(fmsb)
+  
+  if(class(in_frame) != 'data.frame') in_frame<-data.frame(in_frame)
+  
+  #get initial vif value for all comparisons of variables
+  vif_init<-NULL
+  var_names <- names(in_frame)
+  for(val in var_names)
+    {
+    regressors <- var_names[-which(var_names == val)]
+    form <- paste(regressors, collapse = '+')
+    form_in <- formula(paste(val, '~', form))
+    vif_init<-rbind(vif_init, c(val, VIF(lm(form_in, data = in_frame, ...))))
+    }
+  vif_max<-max(as.numeric(vif_init[,2]), na.rm = TRUE)
+  
+  if(vif_max < thresh)
+    {
+    if(trace==T)
+      { #print output of each iteration
+      prmatrix(vif_init,collab=c('var','vif'),rowlab=rep('',nrow(vif_init)),quote=F)
+      cat('\n')
+      cat(paste('All variables have VIF < ', thresh,', max VIF ',round(vif_max,2), sep=''),'\n\n')
+      }
+    return(var_names)
+    }
+  
+  else
+    {
+    
+    in_dat<-in_frame
+    
+    #backwards selection of explanatory variables, stops when all VIF values are below 'thresh'
+    while(vif_max >= thresh)
+      {
+      
+      vif_vals<-NULL
+      var_names <- names(in_dat)
+      
+      for(val in var_names)
+        {
+        regressors <- var_names[-which(var_names == val)]
+        form <- paste(regressors, collapse = '+')
+        form_in <- formula(paste(val, '~', form))
+        vif_add<-VIF(lm(form_in, data = in_dat, ...))
+        vif_vals<-rbind(vif_vals,c(val,vif_add))
+        }
+      max_row<-which(vif_vals[,2] == max(as.numeric(vif_vals[,2]), na.rm = TRUE))[1]
+      
+      vif_max<-as.numeric(vif_vals[max_row,2])
+      
+      if(vif_max<thresh) break
+      
+      if(trace==T){ #print output of each iteration
+        prmatrix(vif_vals,collab=c('var','vif'),rowlab=rep('',nrow(vif_vals)),quote=F)
+        cat('\n')
+        cat('removed: ',vif_vals[max_row,1],vif_max,'\n\n')
+        flush.console()
+        }
+      
+      in_dat<-in_dat[,!names(in_dat) %in% vif_vals[max_row,1]]
+      }
+    
+    return(names(in_dat))
+    }
+  }
+```
+
+```{r}
+vif<- vif_func(in_frame=df,thresh=5,trace=T)
+vif
+```
+
+## The output of VIF with variables without multicollinearity:
+'''
+var                                   vif             
+ Days.since.account.creation           1.04019377991278
+ Covid.Policy.Changes.hospital.changes 1.7611849229838 
+ Covid.specific.event                  1.82041175410335
+ Event                                 1.37656857595958
+ General.covid.awareness               1.44977905321228
+ Health.Education.Awareness            1.77223940915485
+ Hospital.Promotion                    5.21697421323313
+ Hospital.specific.covid.education     1.89528453429816
+ Job.Posting.Hiring                    1.82531387154575
+ Miscellaneous                         1.85152600066952
+ No.Image.Video                        1.05484020312986
+ Urban                                 1.10722535302754
+ EVENING                               1.09321379565343
+ MORNING                               1.01678374566184
+ NIGHT                                 1.10941013118167
+ Weekend                               1.026041812792  
+ Likes                                 1.12271317446215
+'''
