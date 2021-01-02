@@ -12,4 +12,4 @@ Final Recommendations:<br>
 6. Reducing direct promotional tweets and instead focusing on tweeting about Health education/Awareness and Event.<br>
 
 
-A detailed explanation of the project can be found in the [Report](https://github.com/krishangi-deka/Best-Twitter-Practices-Illinois-Medical-Hospitals/blob/main/Report%20-%20Illinois%20Medical%20Hospitals.pdf) here.
+A detailed analysis and explanation of the project can be found in the [Report](https://github.com/krishangi-deka/Best-Twitter-Practices-Illinois-Medical-Hospitals/blob/main/Report%20-%20Illinois%20Medical%20Hospitals.pdf) here.
