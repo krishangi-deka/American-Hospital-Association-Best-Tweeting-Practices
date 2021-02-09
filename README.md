@@ -1,4 +1,4 @@
-# Best-Twitter-Practices-Illinois-Medical-Hospitals
+# American-Hospital-Association-Best-Tweeting-Practices
 Summary: The project focusses on identifying and analyzing tweet practices followed by hospitals in Illinois during the COVID-19 pandemic using Topic Modelling and finally focusses on identifying factors that impact the popularity of a tweet(number of likes and retweets), and recommend the best tweet-practices to be followed by hospitals using Hypothesis Testing and Linear Regression.
 
 Data: The original hospital twitter handles data for hospitals in Illinois was being provided by the [American Hospitals Association](https://www.aha.org/). Rest of the data was collected using twitter streaming using Corex and retweets data was collected using twint API. Data was scraped for 58 hospitals in Illinois, out of which only 46 hospitals had tweets dated from January 1 to September 30, 2020. 
